@@ -1,0 +1,23 @@
+CREATE TABLE stands (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL UNIQUE,
+    longitude DECIMAL(10, 2) NOT NULL,
+    latitude DECIMAL(10, 2) NOT NULL,
+    monday_hours_open TIME,
+    monday_hours_close TIME,
+    tuesday_hours_open TIME,
+    tuesday_hours_close TIME,
+    wednesday_hours_open TIME,
+    wednesday_hours_close TIME,
+    thursday_hours_open TIME,
+    thursday_hours_close TIME,
+    friday_hours_open TIME,
+    friday_hours_close TIME,
+    saturday_hours_open TIME,
+    saturday_hours_close TIME,
+    sunday_hours_open TIME,
+    sunday_hours_close TIME,
+    user_id BIGINT,
+    CONSTRAINT fk_stand_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
