@@ -1,5 +1,6 @@
 package com.truskappka.truskappka_backend.stand.entity;
 
+import com.truskappka.truskappka_backend.opinion.entity.Opinion;
 import com.truskappka.truskappka_backend.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +21,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -66,4 +69,7 @@ public class Stand {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "stand")
+    private Set<Opinion> opinions;
 }

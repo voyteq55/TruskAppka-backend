@@ -117,7 +117,7 @@ public class StandService {
         }
     }
 
-    private Stand getStandByUuid(UUID uuid) {
+    public Stand getStandByUuid(UUID uuid) {
         return standRepository.findByUuid(uuid).orElseThrow(
                 () -> new ObjectNotFoundException("Stand with uuid " + uuid + " not found")
         );
