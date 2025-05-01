@@ -1,6 +1,7 @@
 package com.truskappka.truskappka_backend.image.service;
 
 import com.truskappka.truskappka_backend.image.client.MinioClientWrapper;
+import com.truskappka.truskappka_backend.image.exception.MinioCustomException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,15 @@ public class ImageService {
     private final MinioClientWrapper minioWrapper;
 
 
-    public String uploadImage(MultipartFile file) throws Exception {
+    public String uploadImage(MultipartFile file) throws MinioCustomException {
         String extension = FileNameUtils.getExtension(file.getOriginalFilename());
         String uniqueName = getUniqueName(extension);
 
-        minioWrapper.uploadFile(file, uniqueName);
+        try {
+            minioWrapper.uploadFile(file, uniqueName);
+        } catch (Exception e) {
+            throw new RuntimeException("Uploading Image error" + e);
+        }
         return uniqueName;
     }
 
@@ -30,6 +35,7 @@ public class ImageService {
     private String getUniqueName(String extension) {
         String uniqueName;
         do {
+            // TODO handle gracefully
             uniqueName = UUID.randomUUID() + "." + extension;
         } while (minioWrapper.doesObjectExist(uniqueName));
 

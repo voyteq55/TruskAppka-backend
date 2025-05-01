@@ -1,23 +1,22 @@
 package com.truskappka.truskappka_backend.image.client;
 
 import com.truskappka.truskappka_backend.config.minio.MinioProperties;
+import com.truskappka.truskappka_backend.image.exception.MinioCustomException;
 import io.minio.*;
 import io.minio.http.Method;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
+@AllArgsConstructor
 @Component
 public class MinioClientWrapper {
 
     private final MinioClient minioClient;
     private final MinioProperties properties;
 
-    public MinioClientWrapper(MinioClient minioClient, MinioProperties properties) {
-        this.minioClient = minioClient;
-        this.properties = properties;
-    }
 
     public void uploadFile(MultipartFile file, String objectName) throws Exception {
         String bucket = properties.getBucket();
@@ -52,7 +51,7 @@ public class MinioClientWrapper {
             URI uri = new URI(fullUrl);
             return uri.getRawPath() + "?" + uri.getRawQuery();
         } catch (Exception e) {
-            throw new RuntimeException("Error generating stripped pre-signed URL", e);
+            throw new MinioCustomException("Error generating stripped pre-signed URL" + e);
         }
     }
 
@@ -70,9 +69,9 @@ public class MinioClientWrapper {
             if (e.response().code() == 404) {
                 return false;
             }
-            throw new RuntimeException("MinIO error: " + e.getMessage(), e);
+            throw new MinioCustomException("MinIO error: " + e.getMessage() + e);
         } catch (Exception e) {
-            throw new RuntimeException("Error checking if object exists", e);
+            throw new MinioCustomException("Error checking if object exists" + e);
         }
     }
 }
