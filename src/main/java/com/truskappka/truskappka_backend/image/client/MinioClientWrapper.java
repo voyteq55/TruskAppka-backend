@@ -4,13 +4,13 @@ import com.truskappka.truskappka_backend.config.minio.MinioProperties;
 import com.truskappka.truskappka_backend.image.exception.MinioCustomException;
 import io.minio.*;
 import io.minio.http.Method;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class MinioClientWrapper {
 

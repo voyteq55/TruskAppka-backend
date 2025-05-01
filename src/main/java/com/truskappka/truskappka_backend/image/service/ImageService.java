@@ -3,13 +3,14 @@ package com.truskappka.truskappka_backend.image.service;
 import com.truskappka.truskappka_backend.image.client.MinioClientWrapper;
 import com.truskappka.truskappka_backend.image.exception.MinioCustomException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class ImageService {
 

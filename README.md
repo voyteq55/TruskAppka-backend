@@ -18,12 +18,12 @@ minio.bucket:images
 ## Enviromental variables:
 
 ```env
-SERVICE_DB_URL=jdbc:postgresql://localhost:5432/truskappka
+SERVICE_DB_URL=jdbc:postgresql://postgresdb:5432/truskappka
 SERVICE_DB_LOGIN=postgres
 SERVICE_DB_PASSWORD=postgres
 SERVICE_DB_NAME=truskappka
 
-MINIO_URL=http://localhost:9000
+MINIO_URL=http://minio:9000
 MINIO_ACCESS_KEY=minioadmin
 MINIO_SECRET_KEY=minioadmin
 MINIO_BUCKET=images

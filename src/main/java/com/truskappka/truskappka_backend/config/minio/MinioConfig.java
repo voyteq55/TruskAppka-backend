@@ -1,11 +1,11 @@
 package com.truskappka.truskappka_backend.config.minio;
 
 import io.minio.MinioClient;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Configuration
 public class MinioConfig {
 
