@@ -1,4 +1,5 @@
 services:
+#  comment out server for local development
   server:
     restart: unless-stopped
     build:
