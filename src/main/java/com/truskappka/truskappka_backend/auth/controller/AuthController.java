@@ -26,8 +26,12 @@ public class AuthController {
 
         boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
 
-        // TODO replace with real verification
+        // TODO replace with real verification for deployment with real google client id
         if (true) {
+            /* TODO
+                if verified we need to check if the user exists in db and if not create record for him/her
+                lets also keep email, picture and name stored in db User model for further usage
+             */
             String accessToken = jwtUtil.generateAccessToken(email);
             String refreshToken = jwtUtil.generateRefreshToken(email);
             return Map.of(

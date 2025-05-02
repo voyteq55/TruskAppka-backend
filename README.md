@@ -12,7 +12,7 @@ minio.secretKey:minioadmin
 minio.bucket:images
 
 jwt.secret:3IUIRg1kXZF9DrfhuBKU0+E8IHL+3yVcGVd0aE4z5y8=
-google.client.id:1234567890-abcde12345.apps.googleusercontent.com
+google.client-id:1234567890-abcde12345.apps.googleusercontent.com
 ```
 
 - provide Minio and Postgres containers with respective envs
