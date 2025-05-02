@@ -4,7 +4,7 @@ import com.truskappka.truskappka_backend.opinion.dto.OpinionAddForm;
 import com.truskappka.truskappka_backend.opinion.dto.OpinionDto;
 import com.truskappka.truskappka_backend.opinion.dto.Rating;
 import com.truskappka.truskappka_backend.opinion.entity.Opinion;
-import com.truskappka.truskappka_backend.tag.dto.TagDto;
+import com.truskappka.truskappka_backend.tag.entity.Tag;
 import lombok.experimental.UtilityClass;
 
 import java.util.UUID;
@@ -31,7 +31,7 @@ public class OpinionMapper {
                         opinion.getPriceRating()
                 ))
                 .comment(opinion.getComment())
-                .tags(opinion.getTags().stream().map(tag -> new TagDto(tag.getName())).toList())
+                .tags(opinion.getTags().stream().map(Tag::getName).toList())
                 .build();
     }
 }

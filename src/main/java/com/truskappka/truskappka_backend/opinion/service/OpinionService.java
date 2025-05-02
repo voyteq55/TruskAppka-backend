@@ -19,9 +19,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -52,29 +52,40 @@ public class OpinionService {
         List<Opinion> opinions = opinionRepository.findByStand(stand);
 
         if (opinions.isEmpty()) {
-            return new AverageRatingDto(
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO
-            );
+            return new AverageRatingDto(0.0, 0.0, 0.0, List.of());
         }
 
-        BigDecimal totalQuality = BigDecimal.ZERO;
-        BigDecimal totalService = BigDecimal.ZERO;
-        BigDecimal totalPrice = BigDecimal.ZERO;
+        double totalQuality = 0.0;
+        double totalService = 0.0;
+        double totalPrice = 0.0;
+        Map<String, Integer> tagFrequency = new HashMap<>();
 
         for (Opinion opinion : opinions) {
-            totalQuality = totalQuality.add(opinion.getQualityRating());
-            totalService = totalService.add(opinion.getServiceRating());
-            totalPrice = totalPrice.add(opinion.getPriceRating());
+            totalQuality += opinion.getQualityRating();
+            totalService += opinion.getServiceRating();
+            totalPrice += opinion.getPriceRating();
+
+            if (opinion.getTags() != null) {
+                for (Tag tag : opinion.getTags()) {
+                    tagFrequency.merge(tag.getName(), 1, Integer::sum);
+                }
+            }
         }
 
-        BigDecimal averageQuality = totalQuality.divide(BigDecimal.valueOf(opinions.size()), RoundingMode.HALF_UP);
-        BigDecimal averageService = totalService.divide(BigDecimal.valueOf(opinions.size()), RoundingMode.HALF_UP);
-        BigDecimal averagePrice = totalPrice.divide(BigDecimal.valueOf(opinions.size()), RoundingMode.HALF_UP);
+        int size = opinions.size();
+        double averageQuality = totalQuality / size;
+        double averageService = totalService / size;
+        double averagePrice = totalPrice / size;
 
-        return new AverageRatingDto(averageQuality, averageService, averagePrice);
+        List<String> topTags = tagFrequency.entrySet().stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue())) // descending
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        return new AverageRatingDto(averageQuality, averageService, averagePrice, topTags);
     }
+
 
     @Transactional
     public OpinionDto addOpinion(OpinionAddForm opinionAddForm) {

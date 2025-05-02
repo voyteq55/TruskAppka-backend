@@ -66,6 +66,7 @@ public class StandMapper {
     public StandMapMarkerDto toStandMapMarkerDto(Stand stand) {
         return StandMapMarkerDto.builder()
                 .uuid(stand.getUuid())
+                .name(stand.getName())
                 .coordinate(new Coordinate(stand.getLongitude(), stand.getLatitude()))
                 .build();
     }

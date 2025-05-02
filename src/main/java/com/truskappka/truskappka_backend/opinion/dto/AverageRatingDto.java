@@ -1,9 +1,10 @@
 package com.truskappka.truskappka_backend.opinion.dto;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public record AverageRatingDto(
-        BigDecimal averageQualityRating,
-        BigDecimal averageServiceRating,
-        BigDecimal averagePriceRating
+        double averageQualityRating,
+        double averageServiceRating,
+        double averagePriceRating,
+        List<String> topTags
 ) {}

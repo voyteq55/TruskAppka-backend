@@ -15,23 +15,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 class GlobalExceptionHandler {
 
     @ExceptionHandler(ObjectNotFoundException.class)
-    ResponseEntity<String> handleObjectNotFoundException(ObjectNotFoundException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    ResponseEntity<ErrorResponse> handleObjectNotFoundException(ObjectNotFoundException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ObjectAlreadyExistsException.class)
-    ResponseEntity<String> handleObjectAlreadyExistsException(ObjectAlreadyExistsException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+    ResponseEntity<ErrorResponse> handleObjectAlreadyExistsException(ObjectAlreadyExistsException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ForbiddenAccessException.class)
-    ResponseEntity<String> handleForbiddenAccessException(ForbiddenAccessException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+    ResponseEntity<ErrorResponse> handleForbiddenAccessException(ForbiddenAccessException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UserNotVendorException.class)
-    ResponseEntity<String> handleUserNotVendorException(UserNotVendorException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    ResponseEntity<ErrorResponse> handleUserNotVendorException(UserNotVendorException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
-
 }

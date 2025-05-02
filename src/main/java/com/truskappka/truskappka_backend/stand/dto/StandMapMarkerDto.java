@@ -8,5 +8,6 @@ import java.util.UUID;
 @Builder
 public record StandMapMarkerDto (
         UUID uuid,
+        String name,
         Coordinate coordinate
 ) {}

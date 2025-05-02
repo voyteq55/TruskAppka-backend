@@ -46,10 +46,10 @@ public class Stand {
     private String name;
 
     @Column(nullable = false)
-    private BigDecimal longitude;
+    private double longitude;
 
     @Column(nullable = false)
-    private BigDecimal latitude;
+    private double latitude;
 
     private LocalTime mondayHoursOpen;
     private LocalTime mondayHoursClose;

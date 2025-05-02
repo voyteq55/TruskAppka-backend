@@ -45,13 +45,13 @@ public class Opinion {
     private UUID uuid;
 
     @Column(nullable = false)
-    private BigDecimal qualityRating;
+    private int qualityRating;
 
     @Column(nullable = false)
-    private BigDecimal serviceRating;
+    private int serviceRating;
 
     @Column(nullable = false)
-    private BigDecimal priceRating;
+    private int priceRating;
 
     @Column(nullable = false)
     private String comment;
