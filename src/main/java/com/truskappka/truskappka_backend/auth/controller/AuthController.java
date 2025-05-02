@@ -23,8 +23,10 @@ public class AuthController {
     public Map<String, String> authenticateWithGoogle(@RequestParam String idToken) {
         var payload = tokenVerifierService.verifyToken(idToken);
         String email = payload.getEmail();
+
         boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
 
+        // TODO replace with real verification
         if (true) {
             String accessToken = jwtUtil.generateAccessToken(email);
             String refreshToken = jwtUtil.generateRefreshToken(email);
