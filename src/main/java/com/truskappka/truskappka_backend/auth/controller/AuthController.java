@@ -21,31 +21,34 @@ public class AuthController {
 
     @PostMapping("/access")
     public Map<String, String> authenticateWithGoogle(@RequestParam String idToken) {
-        var payload = tokenVerifierService.verifyToken(idToken);
-        String email = payload.getEmail();
-
-        boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
-
+//        var payload = tokenVerifierService.verifyToken(idToken);
+//        String email = payload.getEmail();
+//        boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
         // TODO replace with real verification for deployment with real google client id
-        if (true) {
-            /* TODO
-                if verified we need to check if the user exists in db and if not create record for him/her
-                lets also keep email, picture and name stored in db User model for further usage
-             */
-            String accessToken = jwtUtil.generateAccessToken(email);
-            String refreshToken = jwtUtil.generateRefreshToken(email);
-            return Map.of(
-                    "accessToken", accessToken,
-                    "refreshToken", refreshToken
-            );
-        } else {
+        /* For now any token with "email" claim will go through, for example:
+         * this token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJlbWFpbCI6Im15QGVtYWlsIn0.qqei_kFbDs8ALnBaOwqXIDg7n-F7sfp4FT_yXmDYLy0
+         */
+        String email = tokenVerifierService.extractEmailMockImpl(idToken);
+        boolean emailVerified = true;
+        if (!emailVerified) {
             throw new RuntimeException("Email not verified.");
         }
+
+        /* TODO
+            if verified we need to check if the user exists in db and if not create record for him/her
+            lets also keep email, picture and name stored in db User model for further usage
+         */
+        String accessToken = jwtUtil.generateAccessToken(email);
+        String refreshToken = jwtUtil.generateRefreshToken(email);
+        return Map.of(
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+        );
     }
 
     @PostMapping("/refresh")
     public Map<String, String> refresh(@RequestParam String refreshToken) {
-        if (jwtUtil.validateToken(refreshToken)) {
+        if (!jwtUtil.validateToken(refreshToken)) {
             throw new RuntimeException("Invalid refresh token");
         }
 

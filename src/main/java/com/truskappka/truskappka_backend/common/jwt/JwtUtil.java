@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -20,7 +21,8 @@ public class JwtUtil {
     private static final long REFRESH_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24 * 30; // 30 days
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(properties.getSecret().getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Base64.getDecoder().decode(properties.getSecret());
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateAccessToken(String subject) {
