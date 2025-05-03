@@ -5,10 +5,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.truskappka.truskappka_backend.common.exception.InvalidTokenException;
 import com.truskappka.truskappka_backend.config.google.GoogleProperties;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +32,14 @@ public class GoogleTokenVerifierService {
             if (idToken != null) {
                 return idToken.getPayload();
             } else {
-                throw new IllegalArgumentException("Invalid ID token.");
+                throw new InvalidTokenException("Invalid ID token.");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Token verification failed", e);
+            throw new InvalidTokenException("Token verification failed");
         }
     }
 
-    public String extractEmailMockImpl(String token) {
+    public String verifyTokenMock(String token) {
         try {
             String[] parts = token.split("\\.");
             if (parts.length < 2) {
@@ -54,7 +52,7 @@ public class GoogleTokenVerifierService {
 
             return (String) claims.get("email");
         } catch (Exception e) {
-            throw new RuntimeException("Failed to decode JWT: " + e.getMessage(), e);
+            throw new InvalidTokenException("Failed to decode JWT: " + e.getMessage());
         }
     }
 }

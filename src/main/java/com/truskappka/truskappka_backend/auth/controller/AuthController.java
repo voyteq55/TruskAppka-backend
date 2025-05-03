@@ -1,14 +1,12 @@
 package com.truskappka.truskappka_backend.auth.controller;
 
 import com.truskappka.truskappka_backend.auth.dto.TokenDto;
+import com.truskappka.truskappka_backend.auth.dto.TokenVerificationForm;
+import com.truskappka.truskappka_backend.auth.service.AuthService;
 import com.truskappka.truskappka_backend.auth.service.GoogleTokenVerifierService;
-import com.truskappka.truskappka_backend.common.exception.InvalidTokenException;
-import com.truskappka.truskappka_backend.common.jwt.JwtUtil;
+import com.truskappka.truskappka_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RequiredArgsConstructor
@@ -17,47 +15,28 @@ import org.springframework.web.bind.annotation.RestController;
 class AuthController {
 
     private final GoogleTokenVerifierService tokenVerifierService;
-    private final JwtUtil jwtUtil;
+    private final UserService userService;
+    private final AuthService authService;
 
 
     @PostMapping("/access")
-    TokenDto authenticateWithGoogle(@RequestParam String idToken) {
-        /*   var payload = tokenVerifierService.verifyToken(idToken);
-        String email = payload.getEmail();
-        boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());*/
+    TokenDto authenticateWithGoogle(@RequestBody TokenVerificationForm body) {
         // TODO replace with real verification for deployment with real google client id
+
+        /*   var payload = tokenVerifierService.verifyToken(idToken);
+         *   String email = payload.getEmail();
+         */
+
         /* For now any token with "email" claim will go through, for example:
          * this token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJlbWFpbCI6Im15QGVtYWlsIn0.qqei_kFbDs8ALnBaOwqXIDg7n-F7sfp4FT_yXmDYLy0
          */
-        String email = tokenVerifierService.extractEmailMockImpl(idToken);
-        boolean emailVerified = true;
-        if (!emailVerified) {
-            throw new InvalidTokenException("Email not verified.");
-        }
-
-        /* TODO
-            if verified we need to check if the user exists in db and if not create record for him/her
-            lets also keep email, picture and name stored in db User model for further usage
-         */
-        String accessToken = jwtUtil.generateAccessToken(email);
-        String refreshToken = jwtUtil.generateRefreshToken(email);
-        return new TokenDto(accessToken, refreshToken);
+        String email = tokenVerifierService.verifyTokenMock(body.token());
+        String userId = userService.findOrCreateByEmail(email).toString();
+        return authService.generateToken(userId);
     }
 
     @PostMapping("/refresh")
-    TokenDto refresh(@RequestParam String refreshToken) {
-        if (!jwtUtil.validateToken(refreshToken)) {
-            throw new InvalidTokenException("Invalid token");
-        }
-
-        var subject = jwtUtil.getSubject(refreshToken);
-        var type = jwtUtil.getClaim(refreshToken, "type");
-        if (!"refresh".equals(type)) {
-            throw new InvalidTokenException("Not a refresh token");
-        }
-
-        String accessToken = jwtUtil.generateAccessToken(subject);
-        String newRefreshToken = jwtUtil.generateRefreshToken(subject);
-        return new TokenDto(accessToken, newRefreshToken);
+    TokenDto refresh(@RequestBody TokenVerificationForm body) {
+        return authService.getRefreshToken(body.token());
     }
 }

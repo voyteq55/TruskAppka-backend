@@ -1,6 +1,7 @@
 package com.truskappka.truskappka_backend.user.service;
 
 import com.truskappka.truskappka_backend.common.exception.ObjectNotFoundException;
+import com.truskappka.truskappka_backend.config.security.AuthContext;
 import com.truskappka.truskappka_backend.opinion.dto.OpinionDto;
 import com.truskappka.truskappka_backend.opinion.entity.Opinion;
 import com.truskappka.truskappka_backend.opinion.repository.OpinionRepository;
@@ -24,7 +25,7 @@ public class UserService {
     private final OpinionRepository opinionRepository;
 
     public User getCurrentUser() {
-        UUID uuid = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        UUID uuid = AuthContext.getUserId();
         return getUserByUuid(uuid);
     }
 
@@ -32,6 +33,16 @@ public class UserService {
     public void setUserAsVendor() {
         User user = getCurrentUser();
         user.setVendor(true);
+    }
+
+    @Transactional
+    public UUID findOrCreateByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setEmail(email);
+                    return userRepository.save(newUser);
+                }).getUuid();
     }
 
     private User getUserByUuid(UUID uuid) {

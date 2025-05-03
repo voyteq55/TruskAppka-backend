@@ -1,6 +1,7 @@
 package com.truskappka.truskappka_backend.config.security;
 
-import com.truskappka.truskappka_backend.common.jwt.JwtUtil;
+import com.truskappka.truskappka_backend.auth.service.JwtService;
+import com.truskappka.truskappka_backend.common.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,42 +15,42 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain)
-            throws ServletException, IOException {
+                                    @NotNull FilterChain filterChain) {
+        try {
 
-        final String authHeader = request.getHeader("Authorization");
-        final String token;
+            final String authHeader = request.getHeader("Authorization");
+            final String token;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            token = authHeader.substring(7);
+
+            if (jwtService.validateToken(token)) {
+                String userId = jwtService.getSubject(token);
+                AuthContext.setUserId(UUID.fromString(userId));
+
+                var authToken = new UsernamePasswordAuthenticationToken(userId, null, null);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
             filterChain.doFilter(request, response);
-            return;
+        } catch (Exception e) {
+            throw new InvalidTokenException("Invalid token");
+        } finally {
+            AuthContext.clear();
         }
-
-        token = authHeader.substring(7);
-
-        if (jwtUtil.validateToken(token)) {
-            String username = jwtUtil.getSubject(token);
-
-            var authToken = new UsernamePasswordAuthenticationToken(
-                    username, null, null // you can load user roles/authorities here
-            );
-            authToken.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-        }
-
-        filterChain.doFilter(request, response);
     }
 }
