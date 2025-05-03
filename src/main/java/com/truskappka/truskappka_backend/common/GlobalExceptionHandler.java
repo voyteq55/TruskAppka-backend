@@ -1,12 +1,14 @@
 package com.truskappka.truskappka_backend.common;
 
 import com.truskappka.truskappka_backend.common.exception.ForbiddenAccessException;
+import com.truskappka.truskappka_backend.common.exception.InvalidTokenException;
 import com.truskappka.truskappka_backend.common.exception.ObjectAlreadyExistsException;
 import com.truskappka.truskappka_backend.common.exception.ObjectNotFoundException;
 import com.truskappka.truskappka_backend.user.exception.UserNotVendorException;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -33,4 +35,11 @@ class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> handleUserNotVendorException(UserNotVendorException exception) {
         return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    ResponseEntity<ErrorResponse> handleInvalidTokenException(InvalidTokenException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+
 }
