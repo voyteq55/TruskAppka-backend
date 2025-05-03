@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
@@ -15,11 +14,19 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
 public class User {
+
+    public User() {
+        this.uuid = UUID.randomUUID();
+    }
+
+    public User(String email) {
+        this.uuid = UUID.randomUUID();
+        this.email = email;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +48,5 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Opinion> opinions;
 
-    @PrePersist
-    public void generateUuidIfMissing() {
-        if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
-        }
-    }
+
 }

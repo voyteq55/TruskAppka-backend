@@ -38,11 +38,7 @@ public class UserService {
     @Transactional
     public UUID findOrCreateByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setEmail(email);
-                    return userRepository.save(newUser);
-                }).getUuid();
+                .orElseGet(() -> userRepository.save(new User(email))).getUuid();
     }
 
     private User getUserByUuid(UUID uuid) {
