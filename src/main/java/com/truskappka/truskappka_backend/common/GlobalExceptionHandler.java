@@ -8,7 +8,6 @@ import com.truskappka.truskappka_backend.user.exception.UserNotVendorException;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -38,7 +37,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidTokenException.class)
     ResponseEntity<ErrorResponse> handleInvalidTokenException(InvalidTokenException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
 
