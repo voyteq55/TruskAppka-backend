@@ -1,5 +1,6 @@
 package com.truskappka.truskappka_backend.opinion.utils;
 
+import com.truskappka.truskappka_backend.image.service.ImageService;
 import com.truskappka.truskappka_backend.opinion.dto.OpinionAddForm;
 import com.truskappka.truskappka_backend.opinion.dto.OpinionDto;
 import com.truskappka.truskappka_backend.opinion.dto.Rating;
@@ -7,6 +8,7 @@ import com.truskappka.truskappka_backend.opinion.entity.Opinion;
 import com.truskappka.truskappka_backend.tag.entity.Tag;
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
 import java.util.UUID;
 
 @UtilityClass
@@ -22,7 +24,13 @@ public class OpinionMapper {
                 .build();
     }
 
-    public OpinionDto toOpinionDto(Opinion opinion) {
+    public static OpinionDto toOpinionDto(Opinion opinion, ImageService imageService) {
+        List<String> imageUrls = opinion.getImageUrls() != null
+                ? opinion.getImageUrls().stream()
+                .map(imageService::getImageUrl)
+                .toList()
+                : List.of();
+
         return OpinionDto.builder()
                 .uuid(opinion.getUuid())
                 .rating(new Rating(
@@ -32,6 +40,7 @@ public class OpinionMapper {
                 ))
                 .comment(opinion.getComment())
                 .tags(opinion.getTags().stream().map(Tag::getName).toList())
+                .images(imageUrls)
                 .build();
     }
 }

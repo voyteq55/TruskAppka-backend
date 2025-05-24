@@ -10,5 +10,6 @@ public record OpinionDto(
         UUID uuid,
         Rating rating,
         String comment,
-        List<String> tags
+        List<String> tags,
+        List<String> images
 ) {}

@@ -27,6 +27,12 @@ public class StandService {
     private final StandRepository standRepository;
     private final UserService userService;
 
+    public List<StandMapMarkerDto> getStandsWithinRadius(double lat, double lon, double radiusKm) {
+        return standRepository.findAllWithinRadius(lat, lon, radiusKm).stream()
+                .map(StandMapper::toStandMapMarkerDto)
+                .toList();
+    }
+
     public List<StandMapMarkerDto> getAllStands() {
         return standRepository.findAll().stream()
                 .map(StandMapper::toStandMapMarkerDto)
@@ -52,6 +58,14 @@ public class StandService {
         return StandMapper.toStandDto(savedStand);
     }
 
+    private void validateStandNameIsUnique(UUID standUuid, String name) {
+        Optional<Stand> existingStand = standRepository.findByName(name);
+
+        if (existingStand.isPresent() && !existingStand.get().getUuid().equals(standUuid)) {
+            throw new ObjectAlreadyExistsException("Stand with name " + name + " already exists");
+        }
+    }
+
     private void validateStandNameIsUnique(String name) {
         if (standRepository.existsByName(name)) {
             throw new ObjectAlreadyExistsException("Stand with name " + name + " already exists");
@@ -68,7 +82,7 @@ public class StandService {
         validateStandBelongsToUser(stand, user);
 
         Optional.ofNullable(standEditForm.name()).ifPresent(name -> {
-            validateStandNameIsUnique(name);
+            validateStandNameIsUnique(standUuid, name);
             stand.setName(name);
         });
 

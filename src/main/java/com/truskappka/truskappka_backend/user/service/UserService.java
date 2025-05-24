@@ -2,6 +2,7 @@ package com.truskappka.truskappka_backend.user.service;
 
 import com.truskappka.truskappka_backend.common.exception.ObjectNotFoundException;
 import com.truskappka.truskappka_backend.config.security.AuthContext;
+import com.truskappka.truskappka_backend.image.service.ImageService;
 import com.truskappka.truskappka_backend.opinion.dto.OpinionDto;
 import com.truskappka.truskappka_backend.opinion.entity.Opinion;
 import com.truskappka.truskappka_backend.opinion.repository.OpinionRepository;
@@ -23,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final OpinionRepository opinionRepository;
+    private final ImageService imageService;
 
     public User getCurrentUser() {
         UUID uuid = AuthContext.getUserId();
@@ -64,7 +66,7 @@ public class UserService {
         List<Opinion> userOpinions = opinionRepository.findByUser(user);
 
         return userOpinions.stream()
-                .map(OpinionMapper::toOpinionDto)
+                .map(opinion -> OpinionMapper.toOpinionDto(opinion, imageService))
                 .toList();
     }
 }

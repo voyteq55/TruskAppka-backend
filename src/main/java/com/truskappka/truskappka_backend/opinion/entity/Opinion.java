@@ -3,7 +3,9 @@ package com.truskappka.truskappka_backend.opinion.entity;
 import com.truskappka.truskappka_backend.stand.entity.Stand;
 import com.truskappka.truskappka_backend.tag.entity.Tag;
 import com.truskappka.truskappka_backend.user.entity.User;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -71,4 +73,9 @@ public class Opinion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stand_id", nullable = false)
     private Stand stand;
+
+    @ElementCollection
+    @CollectionTable(name = "opinion_images", joinColumns = @JoinColumn(name = "opinion_id"))
+    @Column(name = "image_url", nullable = false)
+    private Set<String> imageUrls;
 }
